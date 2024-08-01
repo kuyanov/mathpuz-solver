@@ -9,3 +9,4 @@ include(cmake/kissat.cmake)
 include_directories(include)
 
 add_subdirectory(kropki)
+add_subdirectory(sudoku)
