@@ -110,6 +110,7 @@ int main() {
     }
     vector<bool> sol(n * n * n);
     if (satisfiable(cnf, sol)) {
+        cout << "FOUND" << endl;
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
                 auto start = sol.begin() + i * n * n + j * n;
@@ -118,5 +119,7 @@ int main() {
             }
             cout << endl;
         }
+    } else {
+        cout << "NOT FOUND" << endl;
     }
 }

@@ -13,7 +13,7 @@
 #define SAT_SUCCESS 10
 #define SAT_FAIL 20
 
-bool satisfiable(const std::vector<std::vector<int>> &cnf, std::vector<bool> &sol) {
+inline bool satisfiable(const std::vector<std::vector<int>> &cnf, std::vector<bool> &sol) {
     int n = (int) sol.size();
     int m = (int) cnf.size();
     int fds[2];
