@@ -39,6 +39,11 @@ int main() {
             for (int j = 0; j < n; j++) {
                 cnf.back().push_back(getvar(n, i, j, d));
             }
+            for (int j1 = 0; j1 < n; j1++) {
+                for (int j2 = j1 + 1; j2 < n; j2++) {
+                    cnf.push_back({-getvar(n, i, j1, d), -getvar(n, i, j2, d)});
+                }
+            }
         }
     }
     for (int j = 0; j < n; j++) {
@@ -46,6 +51,11 @@ int main() {
             cnf.emplace_back();
             for (int i = 0; i < n; i++) {
                 cnf.back().push_back(getvar(n, i, j, d));
+            }
+            for (int i1 = 0; i1 < n; i1++) {
+                for (int i2 = i1 + 1; i2 < n; i2++) {
+                    cnf.push_back({-getvar(n, i1, j, d), -getvar(n, i2, j, d)});
+                }
             }
         }
     }
@@ -56,6 +66,17 @@ int main() {
                 for (int i = i0; i < i0 + k; i++) {
                     for (int j = j0; j < j0 + l; j++) {
                         cnf.back().push_back(getvar(n, i, j, d));
+                    }
+                }
+                for (int i1 = i0; i1 < i0 + k; i1++) {
+                    for (int j1 = j0; j1 < j0 + l; j1++) {
+                        for (int i2 = i0; i2 < i0 + k; i2++) {
+                            for (int j2 = j0; j2 < j0 + l; j2++) {
+                                if (i1 != i2 || j1 != j2) {
+                                    cnf.push_back({-getvar(n, i1, j1, d), -getvar(n, i2, j2, d)});
+                                }
+                            }
+                        }
                     }
                 }
             }

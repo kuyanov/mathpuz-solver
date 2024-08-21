@@ -118,14 +118,14 @@ int main(int argc, char **argv) {
         vector<int> col(s);
         for (int i = 0; i < s; i++) {
             int ind = find(sol.begin() + i * k, sol.begin() + (i + 1) * k, true) - sol.begin();
-            col[i] = ind - i * k + 1;
+            col[i] = ind - i * k;
         }
         cout << n << endl;
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
                 for (int id: figure.ord[i][j]) {
                     if (id == -1) cout << 0 << ' ';
-                    else cout << col[id] << ' ';
+                    else cout << col[id] + 1 << ' ';
                 }
                 cout << ' ';
             }

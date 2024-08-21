@@ -3,6 +3,7 @@
 #include <array>
 #include <cmath>
 #include "lattice.h"
+#include "figure.h"
 
 namespace Geom2d {
     struct Isometry {
@@ -54,5 +55,21 @@ namespace Geom2d {
             }
         }
         return {-1, -1, -1};
+    }
+
+    inline bool self_congruent(const Isometry &op, const Figure &figure) {
+        int n = figure.n;
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                for (int f = 0; f < (int) figure.lattice.fs.size(); f++) {
+                    if (figure.ord[i][j][f] == -1) continue;
+                    auto [i2, j2, f2] = lattice_polygon_image(op, figure.lattice, i, j, f);
+                    if (i2 < 0 || i2 >= n || j2 < 0 || j2 >= n || figure.ord[i2][j2][f2] == -1) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
     }
 }

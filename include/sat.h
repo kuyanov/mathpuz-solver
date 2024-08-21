@@ -10,10 +10,11 @@
 #include <unistd.h>
 #include <vector>
 
-#define SAT_SUCCESS 10
-#define SAT_FAIL 20
+#define SAT 10
+#define UNSAT 20
 
-inline bool satisfiable(const std::vector<std::vector<int>> &cnf, std::vector<bool> &sol) {
+inline bool satisfiable(const std::vector<std::vector<int>> &cnf, std::vector<bool> &sol,
+                        const std::string &solver = "kissat", const std::vector<std::string> &params = {}) {
     int n = (int) sol.size();
     int m = (int) cnf.size();
     int fds[2];
@@ -28,7 +29,14 @@ inline bool satisfiable(const std::vector<std::vector<int>> &cnf, std::vector<bo
         close(fds2[0]);
         dup2(fds[0], 0);
         dup2(fds2[1], 1);
-        execlp(KISSAT_EXECUTABLE, "kissat", nullptr);
+        const char *argv[params.size() + 2];
+        argv[0] = solver.data();
+        argv[params.size() + 1] = nullptr;
+        for (int arg = 0; arg < params.size(); arg++) {
+            argv[arg + 1] = params[arg].data();
+        }
+        std::string path = std::string(BIN_DIR) + "/" + solver;
+        execv(path.data(), (char**)argv);
         exit(-1);
     } else if (child > 0) {
         close(fds[0]);
@@ -67,12 +75,12 @@ inline bool satisfiable(const std::vector<std::vector<int>> &cnf, std::vector<bo
         int status;
         waitpid(child, &status, 0);
         status = WEXITSTATUS(status);
-        if (status == SAT_SUCCESS) {
+        if (status == SAT) {
             return true;
-        } else if (status == SAT_FAIL) {
+        } else if (status == UNSAT) {
             return false;
         } else {
-            throw std::runtime_error("kissat exited with code " + std::to_string(status));
+            throw std::runtime_error(solver + " exited with code " + std::to_string(status));
         }
     } else {
         perror("fork");
