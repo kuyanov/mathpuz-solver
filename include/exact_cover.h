@@ -51,7 +51,7 @@ int cnt_intersecting(int r, const std::vector<std::vector<int>> &sets, std::vect
 
 bool algorithm_x(const std::vector<std::vector<int>> &sets, std::vector<std::list<int>> &cov,
                  std::vector<std::vector<It>> &loc, std::vector<bool> &sol,
-                 std::set<int> &active_sets, std::set<int> &active_vs) {
+                 std::set<int> &active_sets, std::set<int> &active_vs, bool reversed_priors) {
     std::vector<std::pair<int, int>> ord;
     ord.reserve(active_vs.size());
     for (int j: active_vs) {
@@ -92,11 +92,14 @@ bool algorithm_x(const std::vector<std::vector<int>> &sets, std::vector<std::lis
     for (int r: rs) {
         priors.emplace_back(cnt_intersecting(r, sets, cov), r);
     }
-    std::sort(priors.rbegin(), priors.rend());
+    std::sort(priors.begin(), priors.end());
+    if (reversed_priors) {
+        std::reverse(priors.rbegin(), priors.rend());
+    }
     for (auto [_, r]: priors) {
         std::vector<int> removed_sets;
         put_set(r, sets, cov, loc, sol, active_sets, active_vs, removed_sets);
-        if (algorithm_x(sets, cov, loc, sol, active_sets, active_vs)) {
+        if (algorithm_x(sets, cov, loc, sol, active_sets, active_vs, reversed_priors)) {
             return true;
         }
         rollback(sets, cov, loc, sol, active_sets, active_vs, removed_sets);
@@ -105,7 +108,8 @@ bool algorithm_x(const std::vector<std::vector<int>> &sets, std::vector<std::lis
     return false;
 }
 
-bool exact_cover(int n, const std::vector<std::vector<int>> &sets, std::vector<bool> &sol) {
+bool exact_cover(int n, const std::vector<std::vector<int>> &sets, std::vector<bool> &sol,
+                 bool reversed_priors = false) {
     int m = (int) sets.size();
     std::vector<std::list<int>> cov(n);
     std::vector<std::vector<It>> loc(m);
@@ -125,5 +129,5 @@ bool exact_cover(int n, const std::vector<std::vector<int>> &sets, std::vector<b
             put_set(i, sets, cov, loc, sol, active_sets, active_vs, removed_sets);
         }
     }
-    return algorithm_x(sets, cov, loc, sol, active_sets, active_vs);
+    return algorithm_x(sets, cov, loc, sol, active_sets, active_vs, reversed_priors);
 }

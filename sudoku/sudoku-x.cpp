@@ -31,7 +31,7 @@ int main() {
             }
         }
     }
-    bool found = exact_cover(cnt_vs, sets, sol);
+    bool found = exact_cover(cnt_vs, sets, sol, false);
     if (found) {
         cout << "FOUND" << endl;
         for (int i = 0; i < n; i++) {

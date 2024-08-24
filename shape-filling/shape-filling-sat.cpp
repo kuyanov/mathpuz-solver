@@ -33,14 +33,6 @@ int main(int argc, char **argv) {
         return 0;
     }
 
-    vector<int> symmetries;
-    for (int is = 0; is < cnt_is; is++) {
-        auto op = decode_isometry(is, lattice, n);
-        if (self_congruent(op, figure)) {
-            symmetries.push_back(is);
-        }
-    }
-
     vector<vector<vector<int>>> pr(k);
     vector<int> num_is(k), shift_is(k + 1);
     for (int c = 0; c < k; c++) {
@@ -114,7 +106,7 @@ int main(int argc, char **argv) {
 
     vector<bool> sol(s * k + shift_is[k]);
     //vector<string> params = {"--forcephase=true", "--probe=false", "--stable=2"};
-    while (satisfiable(cnf, sol)) {
+    if (satisfiable(cnf, sol)) {
         cout << "FOUND" << endl;
         vector<int> col(s);
         for (int i = 0; i < s; i++) {
@@ -132,22 +124,7 @@ int main(int argc, char **argv) {
             }
             cout << endl;
         }
-
-        for (int is: symmetries) {
-            auto op = decode_isometry(is, lattice, n);
-            cnf.emplace_back();
-            for (int i = 0; i < n; i++) {
-                for (int j = 0; j < n; j++) {
-                    for (int f = 0; f < cnt_f; f++) {
-                        int id1 = figure.ord[i][j][f];
-                        if (id1 == -1) continue;
-                        auto [i2, j2, f2] = lattice_polygon_image(op, lattice, i, j, f);
-                        int id2 = figure.ord[i2][j2][f2];
-                        cnf.back().push_back(-(1 + id2 * k + col[id1]));
-                    }
-                }
-            }
-        }
+    } else {
+        cout << "NOT FOUND" << endl;
     }
-    cout << "NOT FOUND" << endl;
 }
