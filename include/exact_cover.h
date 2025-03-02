@@ -6,7 +6,10 @@
 #include <random>
 #include <set>
 #include <vector>
+
+#ifdef APPLE
 #include "EvilThread.h"
+#endif
 
 using It = std::list<int>::iterator;
 
