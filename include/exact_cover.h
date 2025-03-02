@@ -199,7 +199,11 @@ bool exact_cover(int n, const std::vector<std::vector<int>> &sets, std::vector<b
     std::atomic<int> state_id = -1;
     std::atomic<bool> ready = false;
     for (int tid = 0; tid < num_threads; tid++) {
+#ifdef APPLE
         threads[tid] = evil::create_thread(1 << 24, [&](int tid) {
+#else
+            threads[tid] = std::thread([&](int tid) {
+#endif
             for (int sid = tid; sid < (int) q.size(); sid += num_threads) {
                 bool found = algorithm_x(q[sid], ready, false);
                 if (found) {

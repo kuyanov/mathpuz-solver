@@ -15,10 +15,13 @@ add_custom_target(SatSolverBuild DEPENDS
 )
 add_compile_definitions(BIN_DIR="${CMAKE_BINARY_DIR}")
 
-include_directories(include include/evil)
-
-file(GLOB EVIL_SRC include/evil/*.s include/evil/*.cpp)
-add_library(EvilThread STATIC ${EVIL_SRC})
+if (${APPLE})
+    add_compile_definitions(APPLE)
+    include_directories(include include/evil)
+    file(GLOB EVIL_SRC include/evil/*.s include/evil/*.cpp)
+    add_library(EvilThread STATIC ${EVIL_SRC})
+    link_libraries(EvilThread)
+endif ()
 
 add_subdirectory(kropki)
 add_subdirectory(shape-dividing)
